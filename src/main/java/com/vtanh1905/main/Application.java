@@ -10,10 +10,10 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @ComponentScan(basePackages = "com.vtanh1905")
 @EntityScan(basePackages = "com.vtanh1905.entity")
 @EnableJpaRepositories(basePackages = "com.vtanh1905.repository")
-public class ElearningApplication {
+public class Application {
 
 	public static void main(String[] args) {
-		SpringApplication.run(ElearningApplication.class, args);
+		SpringApplication.run(Application.class, args);
 	}
 
 }
