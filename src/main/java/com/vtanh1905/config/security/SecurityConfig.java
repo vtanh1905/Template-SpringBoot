@@ -8,6 +8,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
@@ -24,16 +25,36 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	// Setting some URL allows to be accessed without the loginnation of Security.
 	@Override
 	public void configure(WebSecurity web) throws Exception {
-		web.ignoring().antMatchers("/v2/api-docs", "/configuration/ui", "/swagger-resources/**",
-				"/configuration/security", "/swagger-ui.html", "/webjars/**");
+		web.ignoring()
+			.antMatchers(
+					"/v2/api-docs", 
+					"/configuration/ui", 
+					"/swagger-resources/**",
+					"/configuration/security", 
+					"/swagger-ui.html", 
+					"/webjars/**"
+			);
 	}
 
 	// Configure URL which we can access and not.
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 //		http.cors();
-		http.csrf().disable().antMatcher("/api/**").authorizeRequests().antMatchers("/api/auth/**").permitAll()
-				.anyRequest().authenticated();
+		http.csrf().disable()
+			.antMatcher("/api/**")
+			.authorizeRequests()
+			.antMatchers("/api/auth/**")
+			.permitAll()
+			.antMatchers("/api/example**")
+			.hasAnyRole("ADMIN", "COMPANY") // ROLE_AMDIN ROLE_COMPANY
+			.anyRequest()
+			.authenticated();
+		
+		//Add Filter to decode token
+		http.addFilter(new AuthFilter(this.authenticationManagerBean(), userDetailsService));
+		
+		//System doesn't use session
+		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 	}
 
 	// Pass UserDetailsService so that Security call loadUserByUsername to check Username and Password 

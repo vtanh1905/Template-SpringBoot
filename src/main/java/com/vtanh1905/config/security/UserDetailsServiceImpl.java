@@ -15,6 +15,7 @@ import com.vtanh1905.entity.User;
 import com.vtanh1905.repository.UserRepository;
 
 @Service
+//@Transactional(rollbackOn = Exception.class)
 public class UserDetailsServiceImpl implements UserDetailsService {
 	
 	private UserRepository userRepository;
